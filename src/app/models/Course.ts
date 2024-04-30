@@ -1,9 +1,11 @@
 import {Knex} from 'knex';
 
-interface Course {
+interface ICourse {
   id: number;
   title: string;
   description: string;
+  teacher: string;
+  price: number;
   active: boolean;
 }
 
@@ -15,15 +17,15 @@ class CourseModel {
     this.knex = knex;
   }
 
-  async findById(id: number): Promise<Course | undefined> {
+  async findById(id: number): Promise<ICourse | undefined> {
     return this.knex(this.tableName).where({ id }).first();
   }
 
-  async create(course: Partial<Course>): Promise<Course | any[]> {
+  async create(course: Partial<ICourse>): Promise<ICourse | any[]> {
     return this.knex(this.tableName).insert(course).returning('*');
   }
 
-  async update(id: number, course: Partial<Course>): Promise<Course | undefined> {
+  async update(id: number, course: Partial<ICourse>): Promise<ICourse | undefined> {
     await this.knex(this.tableName).where({ id }).update(course);
     return await this.findById(id);
   }
@@ -33,5 +35,5 @@ class CourseModel {
   }
 }
 
-export { CourseModel};
-export type { Course };
+export { CourseModel };
+export type { ICourse };
