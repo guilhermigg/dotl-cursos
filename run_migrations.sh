@@ -1,0 +1,1 @@
+docker exec -it dotl-application npx knex migrate:latest
