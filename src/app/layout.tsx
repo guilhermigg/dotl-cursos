@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./styles/globals.css";
-
+import { DotLHeader } from "./components/DotLHeader";
 
 export const metadata: Metadata = {
   title: "DotL Server",
@@ -14,7 +14,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="">{children}</body>
+      <body className="">
+        <DotLHeader></DotLHeader>
+        <main className="flex max-h-screen flex-start justify-center">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
