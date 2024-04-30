@@ -1,7 +1,6 @@
-version: '3.8'
-
 services:
   nextjs:
+    container_name: dotl-application
     build:
       context: .
       dockerfile: Dockerfile
@@ -12,14 +11,15 @@ services:
     environment:
       - NODE_ENV=development
     depends_on:
-      - db
+      - postgres 
 
-  db:
+  postgres:
     image: postgres:latest
+    container_name: dotl-database
+    restart: always
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: dotladmin 
       POSTGRES_PASSWORD: dotlpassword
       POSTGRES_DB: dotl
-    network_mode: "host"
