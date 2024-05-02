@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { ICourse } from '../models/Course';
+import { ICourse } from '../../models/Course';
 import { FaCheck } from 'react-icons/fa';
 import { FaX } from 'react-icons/fa6';
 import DotLButton from '@/app/components/DotLButton';
@@ -64,7 +64,7 @@ export default function CoursesList() {
                                 }
                             </td>
                             <td className="px-6 py-4">
-                                R${ course.price / 100  }
+                                R${ course.price / 100 }
                             </td>
                             <td>
                                 <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
@@ -77,7 +77,7 @@ export default function CoursesList() {
             </table>
             <div className="flex justify-end mt-10">
                 <Link href="/courses/create">
-                    <DotLButton>
+                    <DotLButton loading={false}>
                         Criar um curso  
                     </DotLButton>
                 </Link>
