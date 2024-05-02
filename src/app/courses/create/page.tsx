@@ -1,35 +1,79 @@
 "use client"
 import DotLButton from "@/app/components/DotLButton";
+import Spinner from "@/app/components/Spinner";
 import { FormEvent } from "react";
-import { FaMoneyBill } from "react-icons/fa6"
+import { FaMoneyBill, FaCircleExclamation } from "react-icons/fa6"
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [ title, setTitle ] = useState("");
   const [ price, setPrice ] = useState("");
   const [ description, setDescription ] = useState("");
 
+  const [ loading, setLoading ] = useState(false);
+  const [ error, setError ] = useState(false);
+
+  const router = useRouter();
+
   async function testRequest(e : FormEvent) {
     e.preventDefault();
 
     if(!title || !description || !price)
-      return console.error("Todos os campos são obrigatórios")
+      return setError(true);
 
-    fetch("/api/courses", {
-      "method": "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title,
-        price,
-        description
-      }),
-    })
+    if(title.length < 6 || description.length < 3)
+      return setError(true)
+
+    setLoading(true)
+
+    try{
+      const response = await fetch("/api/courses", {
+        "method": "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          price,
+          description
+        }),
+      });
+
+      if (response.ok) {
+        await router.push('/courses');
+      }
+    } catch(e) {
+      console.error(e)
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="flex w-2/5 justify-center flex-col">
+      { error &&
+      <div className="flex p-4 mt-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+        <FaCircleExclamation className="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]"/>
+        <span className="sr-only">Danger</span>
+        <div>
+          <span className="font-medium">
+            Verifique se os requerimentos estão sendo atendidos:
+          </span>
+            <ul className="mt-1.5 list-disc list-inside">
+              <li>
+                Título é obrigatório (mínimo 6 caracteres)
+              </li>
+              <li>
+                Preço não pode ser vazio
+              </li>
+              <li>
+                Descrição é obrigatória (mínimo 3 caracteres)
+              </li>
+          </ul>
+        </div>
+      </div>
+      }
       <form className="w-full h-full" onSubmit={testRequest}>
         <div className="w-full mb-5 mt-10">
           <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -84,8 +128,10 @@ export default function Home() {
             />
         </div>
         <div className="flex justify-end w-full">
-          <DotLButton>
-            Criar
+          <DotLButton loading={loading}>
+            { loading ?
+              <div className="flex justify-center"><Spinner /></div> : "Criar"
+            }
           </DotLButton>
         </div>
       </form>
