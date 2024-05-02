@@ -13,6 +13,8 @@ const config : Knex.Config = {
     migrations: {
       directory: './src/migrations',
     },
+    seeds: {
+      directory: './src/seeds'
     }
 };
 
