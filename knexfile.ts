@@ -11,7 +11,8 @@ const config : Knex.Config = {
       database: process.env.POSTGRES_DB
     },
     migrations: {
-      directory: './src/app/migrations',
+      directory: './src/migrations',
+    },
     }
 };
 
