@@ -5,6 +5,7 @@ import knexConfig from "@/../knexfile";
 import { getServerSession } from "next-auth";
 import { UserModel } from "@/app/models/User";
 import { hashPassword } from "../helpers/bcryptHandler";
+import { validateEmail } from "../helpers/validator";
 
 import { options } from '@/app/api/auth/[...nextauth]/options';
 
@@ -57,7 +58,8 @@ export async function POST(req:any, res: NextResponse) {
     const user = await handleUserSession(role != "3");
     if(!user)
         return NextResponse.json({ error: "Usuário não logado" }, { status: 401 });
-
+    if(validateEmail(email))
+        return NextResponse.json({ error: "Email não é válido", email }, { status: 401 });
     if(!name)
         return NextResponse.json({ error: "Nome vazio" }, { status: 400 });
     if(!email)
