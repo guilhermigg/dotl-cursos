@@ -10,39 +10,52 @@ export default function Home() {
   const [ title, setTitle ] = useState("");
   const [ price, setPrice ] = useState("");
   const [ description, setDescription ] = useState("");
+  const [ thumbnail, setThumbnail ] = useState(null);
 
   const [ loading, setLoading ] = useState(false);
-  const [ error, setError ] = useState(false);
+  const [ errors, setErrors ] = useState<string[]>([])
 
   const router = useRouter();
 
-  async function testRequest(e : FormEvent) {
+  const handleThumbnailChange = (event : any) => {
+    setThumbnail(event.target.files[0]);
+  };
+
+  async function validate(){
+    setErrors(prevErrors => []);
+
+    if(!title || title.trim().length < 3)
+      setErrors(prevErrors => [...prevErrors, "Título deve ter no mínimo 3 caracteres"])
+    if(!description || description.trim().length < 3)
+      setErrors(prevErrors => [...prevErrors, "Descrição deve ter no mínimo 3 caracteres"])
+    if(!price)
+      setErrors(prevErrors => [...prevErrors, "Preço deve ser no mínimo 0 (gratuito)"])
+    if(!thumbnail)
+      setErrors(prevErrors => [...prevErrors, "Thumbnail não foi enviada"])
+  }
+
+  async function createRequest(e : FormEvent) {
     e.preventDefault();
 
-    if(!title || !description || !price)
-      return setError(true);
+    await validate();
 
-    if(title.length < 6 || description.length < 3)
-      return setError(true)
-
+    if(errors.length > 0) return
+  
     setLoading(true)
 
+    const fd = new FormData();
+    fd.append('title', title);
+    fd.append('description', description);
+    fd.append('price', price);
+    fd.append('thumbnail', thumbnail ? thumbnail : "");
+    
     try{
       const response = await fetch("/api/courses", {
-        "method": "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title,
-          price,
-          description
-        }),
+        method: "POST",
+        body: fd
       });
 
-      if (response.ok) {
-        await router.push('/courses');
-      }
+      if (response.ok) router.push('/admin/courses');
     } catch(e) {
       console.error(e)
     } finally {
@@ -52,29 +65,25 @@ export default function Home() {
 
   return (
     <div className="flex w-2/5 justify-center flex-col">
-      { error &&
+      { errors.length > 0 &&
       <div className="flex p-4 mt-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
         <FaCircleExclamation className="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]"/>
-        <span className="sr-only">Danger</span>
+        <span className="sr-only">Erros</span>
         <div>
           <span className="font-medium">
             Verifique se os requerimentos estão sendo atendidos:
           </span>
             <ul className="mt-1.5 list-disc list-inside">
-              <li>
-                Título é obrigatório (mínimo 6 caracteres)
-              </li>
-              <li>
-                Preço não pode ser vazio
-              </li>
-              <li>
-                Descrição é obrigatória (mínimo 3 caracteres)
-              </li>
+              {errors.map( (error, idx ) => (
+                <li key={idx}>
+                  { error }
+                </li>
+              ))}
           </ul>
         </div>
       </div>
       }
-      <form className="w-full h-full" onSubmit={testRequest}>
+      <form className="w-full h-full" onSubmit={createRequest}>
         <div className="w-full mb-5 mt-10">
           <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
             Título do curso
@@ -86,7 +95,6 @@ export default function Home() {
             placeholder="Título"
             onChange={(e) => setTitle(e.target.value)}
             value={title}
-            required
             />
         </div>
 
@@ -108,9 +116,21 @@ export default function Home() {
               placeholder="Preço do curso"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              required
             />
           </div>
+        </div>
+
+        <div className="w-full mb-5 mt-5">
+          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="upload_thumbnail">
+            Upload imagem da capa do curso
+          </label>
+
+          <input className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+            id="upload_thumbnail"
+            type="file"
+            accept="image/*"
+            onChange={handleThumbnailChange}
+          />
         </div>
 
         <div className="w-full mb-5 mt-5">
@@ -124,8 +144,7 @@ export default function Home() {
             placeholder="Escreva aqui uma descrição para o curso"
             onChange={(e) => setDescription(e.target.value)}
             value={description}
-            required
-            />
+          />
         </div>
         <div className="flex justify-end w-full">
           <DotLButton loading={loading}>
