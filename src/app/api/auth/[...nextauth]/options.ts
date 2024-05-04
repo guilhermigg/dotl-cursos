@@ -1,5 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { comparePassword } from "../../helpers/bcryptHandler";
 
 import Knex from "knex";
 import knexConfig from "@/../knexfile";
@@ -10,6 +11,9 @@ import { UserModel } from "@/app/models/User";
 const userModel = new UserModel(knex);
 
 export const options : NextAuthOptions = {
+    pages: {
+        signIn: "/login",
+    },
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -34,10 +38,14 @@ export const options : NextAuthOptions = {
                     console.log(e)
                 }
 
-                if (userFound == undefined || userFound?.password != credentials?.password)
+                if (userFound == undefined || !credentials)
                     return null
+                
+                const matchPassword = await comparePassword(credentials?.password, userFound?.password as string)
+
+                if(!matchPassword) return null 
                 else {
-                    delete userFound.password;
+                    delete userFound.password
                     return userFound 
                 }
             }

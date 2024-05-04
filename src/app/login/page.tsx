@@ -1,18 +1,33 @@
-"use client";
+'use client'
+
 import { FormEvent, useState } from "react"
 import DotLButton from "../components/DotLButton";
+import { signIn } from "next-auth/react";
 
-export default function Login() {
+type Props = {
+    searchParams?: Record<"callbackUrl" | "error", string>;
+};
+
+export default function Login(props: Props) {
     const [ email, setEmail ] = useState("");
     const [ password, setPassword ] = useState("");
 
-    const loginRequest = (e : FormEvent) => {
+    const loginRequest = async (e : FormEvent) => {
         e.preventDefault();
+
+        await signIn("credentials", {
+            email: email,
+            password,
+            redirect: true,
+            callbackUrl: props.searchParams?.callbackUrl || "http://localhost:3000/"
+        });
     }
 
     return (
         <div className="flex flex-col justify-center items-center">
-            <h1 className="text-4xl font-extrabold m-10"> Login</h1>
+            <h1 className="text-4xl font-extrabold m-10">
+                Login
+            </h1>
 
             <form onSubmit={loginRequest}>
                 <input
