@@ -53,7 +53,13 @@ export default function CoursesList() {
                     {courses.map( (course, idx) => (
                         <tr className="bg-white border-b dark:bg-black dark:border-gray-700" key={idx}>
                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                { course.title }
+                                <div title={course.title}>
+                                    { course.title.slice(0,37) }
+
+                                    { course.title.length > 37 &&
+                                        <span>...</span>
+                                    }
+                                </div>
                             </th>
                             <td className="px-6 py-4">
                                 { course.teacher } 
@@ -75,8 +81,15 @@ export default function CoursesList() {
                     ))}
                 </tbody>
             </table>
+
+            {courses.length == 0 &&
+            <div>
+                <h1> Nenhum curso cadastrado até agora. :( </h1>
+            </div>
+            }
+
             <div className="flex justify-end mt-10">
-                <Link href="/courses/create">
+                <Link href="/admin/courses/create">
                     <DotLButton loading={false}>
                         Criar um curso  
                     </DotLButton>
