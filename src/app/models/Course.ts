@@ -4,7 +4,9 @@ interface ICourse {
   id: number;
   title: string;
   description: string;
-  teacher: string;
+  teacher_id: number;
+  teacher?: string;
+  thumbnail: string;
   price: number;
   active: boolean;
 }
@@ -19,6 +21,13 @@ class CourseModel {
 
   async findById(id: number): Promise<ICourse | undefined> {
     return this.knex(this.tableName).where({ id }).first();
+  }
+
+  async listAll(): Promise<ICourse[] > {
+    return this.knex(this.tableName)
+      .join('users', `${this.tableName}.teacher_id`, '=', 'users.id')
+      .select(`${this.tableName}.*`, 'users.name AS teacher')
+      .where({ [`${this.tableName}.active`]: false });
   }
 
   async create(course: Partial<ICourse>): Promise<ICourse | any[]> {
