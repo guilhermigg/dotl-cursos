@@ -23,3 +23,14 @@ services:
       POSTGRES_USER: dotladmin 
       POSTGRES_PASSWORD: dotlpassword
       POSTGRES_DB: dotl
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./data:/data 
+    environment:
+      MINIO_ROOT_USER: guilherme
+      MINIO_ROOT_PASSWORD: guilherme123
+    command: server /data 
