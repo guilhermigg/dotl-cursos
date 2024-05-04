@@ -1,10 +1,11 @@
 import { Knex } from "knex";
 
 interface IUser {
-  id: number;
+  id: string;
   name: string;
   email: string;
   password?: string;
+  role?: string;
   active: boolean;
 }
 
@@ -17,11 +18,11 @@ class UserModel {
   }
 
   async findById(id: number): Promise<IUser | undefined> {
-    return this.knex(this.tableName).where({ id }).first();
+    return this.knex(this.tableName).where({ id, active: true }).first();
   }
 
   async findByEmail(email: string): Promise<IUser | undefined> {
-    return this.knex(this.tableName).where({ email }).first();
+    return this.knex(this.tableName).where({ email, active: true }).first();
   }
 
   async create(user: Partial<IUser>): Promise<IUser | any[]> {
