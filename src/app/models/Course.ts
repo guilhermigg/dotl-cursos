@@ -20,14 +20,19 @@ class CourseModel {
   }
 
   async findById(id: number): Promise<ICourse | undefined> {
-    return this.knex(this.tableName).where({ id }).first();
+    let tableName = this.tableName;
+
+    return this.knex(tableName)
+      .join('users', `${tableName}.teacher_id`, '=', 'users.id')
+      .select(`${tableName}.*`, 'users.name AS teacher')
+      .where({ [`${tableName}.id`]: id }).first();
   }
 
   async listAll(): Promise<ICourse[] > {
     return this.knex(this.tableName)
       .join('users', `${this.tableName}.teacher_id`, '=', 'users.id')
       .select(`${this.tableName}.*`, 'users.name AS teacher')
-      .where({ [`${this.tableName}.active`]: false });
+      .where({ [`${this.tableName}.active`]: true });
   }
 
   async create(course: Partial<ICourse>): Promise<ICourse | any[]> {
