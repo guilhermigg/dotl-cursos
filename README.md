@@ -3,7 +3,7 @@
 Plataforma de Cursos (E-Learning) Open-Source.
 Projeto está em construção ainda...
 
-## Technologies
+## Tecnologias
 - Docker
 - MinIO (object storage server)
 - NextJS
@@ -34,10 +34,11 @@ Projeto está em construção ainda...
 - [ ] Checkout
     - [ ] Atribuir cursos ao usuário
 
-## Getting Started
-Start running the docker-compose file
+## Executando o Projeto
+Comece executando os containers do docker compose
 
 `docker compose up`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Após isso, execute o script `run_migrations.sh` que está na pasta raíz do projeto. Execute também o script `run_seeds.sh`.
 
+Para o primeiro login, veja (se quiser, modifique) as credenciais no arquivo de seed do usuário admin. (/src/seeds/user.ts)
