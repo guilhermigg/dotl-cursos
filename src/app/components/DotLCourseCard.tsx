@@ -1,8 +1,8 @@
-export default async function CourseCard({children, title, price} : {children: any ; title: string ; price : number}) {
+export default async function CourseCard({title, price, thumbnail} : {title: string ; price : number, thumbnail : string}) {
     return (
-        <div className="w-full max-w-sm bg-white border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-5">
+        <div className="w-full max-w-sm bg-white border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-4">
             <a href="#">
-                <img className="p-1 rounded-t-lg" src="https://criarestilosnet.com/wp-content/uploads/2020/04/youtube-video-thumbnail-1200x675.jpg" alt="product image" />
+                <img height={720} width={1280} className="p-1 rounded-t-lg" src={"http://172.19.0.2:9000/courses-thumbnail/"+thumbnail} alt="course thumbnail" />
             </a>
             <div className="px-3 pb-5">
                 <a href="#">
