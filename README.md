@@ -7,8 +7,8 @@ Projeto está em construção ainda...
 - Docker
 - MinIO (object storage server)
 - NextJS
+    - NextAuth
 - React
-    - ReactAuth
 - PostgreSQL
 
 ## RoadMap
